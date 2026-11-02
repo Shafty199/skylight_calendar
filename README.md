@@ -324,6 +324,26 @@ parallel completion calls or blind retries: a remote app can change the chore
 between the read and write, and Skylight provides no transactional idempotency
 guarantee. Mobile automations must validate their authenticated action context
 and map users to configured family members rather than trusting button text.
+## Chores that repeat after completion
+
+`skylight.create_chore` accepts `renewal_interval` and `renewal_unit`
+(`day`, `week` or `month`) together. Skylight schedules the next chore from the
+actual completion date; Home Assistant does not maintain a second timer.
+For example, completing a 30-day chore late on 4 November makes its next due
+date 4 December, rather than retaining its original calendar date.
+
+```yaml
+action: skylight.create_chore
+data:
+  summary: Replace pre-filter
+  up_for_grabs: true
+  renewal_interval: 30
+  renewal_unit: day
+```
+
+`start` optionally sets the initial due date; omitted, it defaults to today.
+Existing chores are not modified. Omit both renewal fields for existing create
+behavior. Do not combine renewal with `recurrence_set` or `recurring_until`.
 
 ---
 

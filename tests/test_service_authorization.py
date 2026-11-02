@@ -38,6 +38,7 @@ def load_exact_nodes():
     target = SOURCE / 'custom_components/skylight/__init__.py'
     tree = ast.parse(target.read_text())
     function_names = {'_resolve_entry', '_resolve_assignees', '_async_authorize_frame_write', '_make_write_handler', '_async_register_services', '_create_chore', '_create_task', '_create_list', '_delete_list', '_delete_chore', '_update_chore', '_create_reward', '_redeem_reward', '_create_recipe', '_plan_meal', '_add_recipe_to_grocery'}
+    function_names = {'_resolve_entry', '_resolve_assignees', '_async_authorize_frame_write', '_make_write_handler', '_async_register_services', '_create_chore', '_create_task', '_create_list', '_delete_list', '_delete_chore', '_create_reward', '_redeem_reward', '_create_recipe', '_plan_meal', '_add_recipe_to_grocery'}
     nodes = []
     for node in tree.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name in function_names:
@@ -116,6 +117,7 @@ class Rig:
 
     async def call(self, service, frame=None):
         data = {'summary':'offline', 'routine':False, 'up_for_grabs':False, 'label':'offline', 'kind':'to_do', 'list_id':'list', 'chore_id':'12345', 'emoji':'🧹', 'reward_points':1, 'name':'reward', 'point_value':1, 'respawn_on_redemption':False, 'reward_id':'reward', 'date':date(2025,1,1), 'meal_category_id':'meal', 'recipe_id':'recipe', 'file_path':'/fake.jpg', 'assignees':['Alex']}
+        data = {'summary':'offline', 'routine':False, 'up_for_grabs':False, 'label':'offline', 'kind':'to_do', 'list_id':'list', 'chore_id':'12345', 'name':'reward', 'point_value':1, 'respawn_on_redemption':False, 'reward_id':'reward', 'date':date(2025,1,1), 'meal_category_id':'meal', 'recipe_id':'recipe', 'file_path':'/fake.jpg', 'assignees':['Alex']}
         if frame is not None: data['frame_id'] = frame
         # Nonempty assignees force the pre-write categories API path.
         await self.hass.services.handlers['skylight', service](NS(service=service, data=data, context=NS(user_id=self.uid)))
